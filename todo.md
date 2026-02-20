@@ -69,5 +69,5 @@
 - [x] Backend: health readings, alerts, emergency contacts, exercise sessions tables
 - [x] Backend: tRPC routers for all health features
 - [x] Update tests for health features (21/21 passing)
-- [ ] Push to GitHub MIDNGHTSAPPHIRE/anime-ascend-wellness
-- [ ] Add to meetaudreyevans.com hub
+- [x] Push to GitHub MIDNGHTSAPPHIRE/anime-ascend-wellness
+- [x] Add to meetaudreyevans.com hub
