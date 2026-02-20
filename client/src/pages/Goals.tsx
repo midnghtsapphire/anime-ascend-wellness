@@ -1,184 +1,128 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Plus, CheckCircle, Target, Zap } from "lucide-react";
+import { getLoginUrl } from "@/const";
+import { Link } from "wouter";
+import { trpc } from "@/lib/trpc";
+import { Star, Plus, ArrowLeft, TrendingUp } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function Goals() {
-  const { isAuthenticated } = useAuth();
-  const [goals, setGoals] = useState([
-    {
-      id: 1,
-      title: "Meditate Daily",
-      category: "mindfulness",
-      progress: 75,
-      target: "30 days",
-      milestones: [
-        { id: 1, title: "7 days", completed: true },
-        { id: 2, title: "14 days", completed: true },
-        { id: 3, title: "21 days", completed: false },
-        { id: 4, title: "30 days", completed: false },
-      ],
-    },
-    {
-      id: 2,
-      title: "Read 12 Books",
-      category: "learning",
-      progress: 33,
-      target: "12 books",
-      milestones: [
-        { id: 1, title: "Book 1", completed: true },
-        { id: 2, title: "Book 4", completed: true },
-        { id: 3, title: "Book 8", completed: false },
-        { id: 4, title: "Book 12", completed: false },
-      ],
-    },
-    {
-      id: 3,
-      title: "Exercise 3x/week",
-      category: "health",
-      progress: 60,
-      target: "12 weeks",
-      milestones: [
-        { id: 1, title: "Week 1-3", completed: true },
-        { id: 2, title: "Week 4-6", completed: true },
-        { id: 3, title: "Week 7-9", completed: false },
-        { id: 4, title: "Week 10-12", completed: false },
-      ],
-    },
-  ]);
+  const { isAuthenticated, loading } = useAuth();
+  const [showForm, setShowForm] = useState(false);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("health");
+
+  const goalsList = trpc.goals.list.useQuery(undefined, { enabled: isAuthenticated });
+  const createGoal = trpc.goals.create.useMutation({
+    onSuccess: () => { goalsList.refetch(); setShowForm(false); setTitle(""); setDescription(""); toast.success("Goal created! 🌸"); },
+  });
+  const updateProgress = trpc.goals.updateProgress.useMutation({
+    onSuccess: () => { goalsList.refetch(); toast.success("Progress updated!"); },
+  });
+
+  if (loading) {
+    return <div className="min-h-screen bg-background flex items-center justify-center"><div className="w-12 h-12 rounded-full border-4 border-[#f5a3c0] border-t-[#e8729a] animate-spin" /></div>;
+  }
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 flex items-center justify-center">
-        <Card className="text-center p-8">
-          <h2 className="text-2xl font-bold text-white mb-4">Please sign in</h2>
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="max-w-md w-full p-8 text-center bg-white border-[#f5a3c0]/20">
+          <Star className="w-16 h-16 text-[#e8a849] mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-[#3d2b2e] mb-2">Goals</h2>
+          <p className="text-[#8a7075] mb-6">Sign in to track your goals.</p>
+          <a href={getLoginUrl()}><Button className="bg-[#e8729a] hover:bg-[#c4507a] text-white rounded-full px-8">Sign In</Button></a>
         </Card>
       </div>
     );
   }
 
-  const categoryColors: Record<string, string> = {
-    mindfulness: "from-cyan-500/20 to-blue-500/20 border-cyan-500/30",
-    learning: "from-amber-500/20 to-yellow-500/20 border-amber-500/30",
-    health: "from-green-500/20 to-emerald-500/20 border-green-500/30",
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
-      {/* Header */}
-      <div className="border-b border-slate-700/50 bg-slate-900/80 backdrop-blur-md sticky top-0 z-40">
-        <div className="container flex items-center justify-between py-4">
-          <div>
-            <h1 className="text-2xl font-bold text-white">Your Goals</h1>
-            <p className="text-slate-400">Track your progress and celebrate milestones</p>
+    <div className="min-h-screen bg-background">
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-[#f5a3c0]/20">
+        <div className="container flex items-center justify-between h-14">
+          <div className="flex items-center gap-3">
+            <Link href="/dashboard"><Button variant="ghost" size="sm" className="text-[#8a7075]"><ArrowLeft className="w-4 h-4 mr-1" /> Back</Button></Link>
+            <span className="font-bold text-[#3d2b2e]">Goals</span>
           </div>
-          <Button className="bg-teal-500 hover:bg-teal-600">
-            <Plus className="w-5 h-5 mr-2" />
-            New Goal
+          <Button onClick={() => setShowForm(!showForm)} size="sm" className="bg-[#e8729a] hover:bg-[#c4507a] text-white rounded-full">
+            <Plus className="w-4 h-4 mr-1" /> New Goal
           </Button>
         </div>
-      </div>
+      </header>
 
-      <div className="container py-8">
-        {/* Goals */}
-        <div className="space-y-6">
-          {goals.map((goal) => (
-            <Card
-              key={goal.id}
-              className={`bg-gradient-to-br ${categoryColors[goal.category]} border p-6`}
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h3 className="text-xl font-bold text-white mb-1">{goal.title}</h3>
-                  <p className="text-sm text-slate-400">Target: {goal.target}</p>
-                </div>
-                <Target className="w-6 h-6 text-slate-400" />
-              </div>
-
-              {/* Progress Bar */}
-              <div className="mb-6">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-semibold text-white">Progress</span>
-                  <span className="text-sm text-slate-400">{goal.progress}%</span>
-                </div>
-                <div className="w-full bg-slate-900/50 rounded-full h-3 overflow-hidden">
-                  <div
-                    className="bg-gradient-to-r from-teal-500 to-pink-500 h-3 rounded-full transition-all"
-                    style={{ width: `${goal.progress}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* Milestones */}
-              <div className="mb-4">
-                <p className="text-sm font-semibold text-white mb-3">Milestones</p>
-                <div className="grid grid-cols-4 gap-2">
-                  {goal.milestones.map((milestone) => (
-                    <div
-                      key={milestone.id}
-                      className={`p-3 rounded-lg text-center text-sm font-medium transition-all ${
-                        milestone.completed
-                          ? "bg-teal-500/30 border border-teal-500 text-teal-300"
-                          : "bg-slate-900/50 border border-slate-700 text-slate-400"
-                      }`}
-                    >
-                      {milestone.completed && <CheckCircle className="w-4 h-4 mx-auto mb-1" />}
-                      <p className="text-xs">{milestone.title}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Actions */}
-              <div className="flex gap-2">
-                <Button className="flex-1 bg-teal-500 hover:bg-teal-600">
-                  <Zap className="w-4 h-4 mr-2" />
-                  Log Progress
-                </Button>
-                <Button variant="outline" className="flex-1 border-slate-600">
-                  View Details
-                </Button>
-              </div>
-            </Card>
-          ))}
-        </div>
-
-        {/* Empty State */}
-        {goals.length === 0 && (
-          <Card className="bg-slate-800/50 border-slate-700 p-12 text-center">
-            <Target className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-white mb-2">No goals yet</h3>
-            <p className="text-slate-400 mb-6">Set your first goal to start your journey</p>
-            <Button className="bg-teal-500 hover:bg-teal-600">
-              <Plus className="w-5 h-5 mr-2" />
-              Create Goal
-            </Button>
+      <div className="container py-6 max-w-2xl mx-auto">
+        {showForm && (
+          <Card className="p-5 bg-white border-[#e8729a]/30 mb-6">
+            <h4 className="font-bold text-[#3d2b2e] mb-3">New Goal</h4>
+            <input type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="Goal title"
+              className="w-full px-3 py-2 border border-[#f5a3c0]/30 rounded-xl text-sm bg-white text-[#3d2b2e] focus:outline-none focus:border-[#e8729a] mb-3" />
+            <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Description (optional)" rows={3}
+              className="w-full px-3 py-2 border border-[#f5a3c0]/30 rounded-xl text-sm bg-white text-[#3d2b2e] focus:outline-none focus:border-[#e8729a] mb-3 resize-none" />
+            <select value={category} onChange={e => setCategory(e.target.value)}
+              className="w-full px-3 py-2 border border-[#f5a3c0]/30 rounded-xl text-sm bg-white text-[#3d2b2e] focus:outline-none focus:border-[#e8729a] mb-3">
+              <option value="health">Health</option>
+              <option value="fitness">Fitness</option>
+              <option value="mindfulness">Mindfulness</option>
+              <option value="career">Career</option>
+              <option value="learning">Learning</option>
+              <option value="relationships">Relationships</option>
+            </select>
+            <div className="flex gap-2">
+              <Button onClick={() => { if (!title.trim()) { toast.error("Title required"); return; } createGoal.mutate({ title: title.trim(), description: description.trim() || undefined, category }); }}
+                className="flex-1 bg-[#e8729a] hover:bg-[#c4507a] text-white rounded-xl" disabled={createGoal.isPending}>
+                Create Goal
+              </Button>
+              <Button onClick={() => setShowForm(false)} variant="outline" className="border-[#f5a3c0] text-[#c4507a] rounded-xl">Cancel</Button>
+            </div>
           </Card>
         )}
 
-        {/* Goal Ideas */}
-        <div className="mt-12">
-          <h2 className="text-2xl font-bold text-white mb-6">Goal Ideas</h2>
-          <div className="grid md:grid-cols-2 gap-4">
-            {[
-              { title: "30-Day Meditation Challenge", category: "mindfulness" },
-              { title: "Read 1 Book Per Month", category: "learning" },
-              { title: "Exercise 3x Per Week", category: "health" },
-              { title: "Journal Daily", category: "mindfulness" },
-            ].map((idea, idx) => (
-              <Card
-                key={idx}
-                className="bg-slate-800/50 border-slate-700 p-4 cursor-pointer hover:border-teal-500/50 transition-all"
-              >
-                <p className="text-white font-medium mb-3">{idea.title}</p>
-                <Button variant="ghost" className="text-teal-400 hover:text-teal-300 p-0">
-                  Create this goal →
-                </Button>
+        {goalsList.isLoading ? (
+          <div className="space-y-3">{[1,2,3].map(i => <div key={i} className="h-24 bg-[#fdf2f4] rounded-xl animate-pulse" />)}</div>
+        ) : goalsList.data && goalsList.data.length > 0 ? (
+          <div className="space-y-3">
+            {goalsList.data.map((goal: any) => (
+              <Card key={goal.id} className="p-4 bg-white border-[#f5a3c0]/20">
+                <div className="flex items-start justify-between mb-3">
+                  <div>
+                    <h4 className="font-bold text-[#3d2b2e]">{goal.title}</h4>
+                    {goal.description && <p className="text-sm text-[#8a7075]">{goal.description}</p>}
+                    {goal.category && <span className="text-xs bg-[#fdf2f4] text-[#c4507a] px-2 py-0.5 rounded-full mt-1 inline-block">{goal.category}</span>}
+                  </div>
+                  <div className="flex items-center gap-1 text-sm font-bold text-[#e8729a]">
+                    <TrendingUp className="w-4 h-4" /> {goal.progress}%
+                  </div>
+                </div>
+                <div className="w-full bg-[#fdf2f4] rounded-full h-2 mb-3">
+                  <div className="bg-gradient-to-r from-[#e8729a] to-[#f5a3c0] h-2 rounded-full transition-all" style={{ width: `${goal.progress}%` }} />
+                </div>
+                <div className="flex gap-2">
+                  {[25, 50, 75, 100].map(p => (
+                    <button key={p} onClick={() => updateProgress.mutate({ id: goal.id, progress: p })}
+                      className={`text-xs px-3 py-1 rounded-full transition-all ${
+                        goal.progress >= p ? 'bg-[#e8729a] text-white' : 'bg-[#fdf2f4] text-[#8a7075] hover:bg-[#f5a3c0]/20'
+                      }`}>
+                      {p}%
+                    </button>
+                  ))}
+                </div>
               </Card>
             ))}
           </div>
-        </div>
+        ) : (
+          <Card className="p-8 bg-white border-[#f5a3c0]/20 text-center">
+            <Star className="w-12 h-12 text-[#f5a3c0] mx-auto mb-3" />
+            <h4 className="font-bold text-[#3d2b2e] mb-1">No goals yet</h4>
+            <p className="text-sm text-[#8a7075] mb-4">Set your first goal and start tracking progress.</p>
+            <Button onClick={() => setShowForm(true)} className="bg-[#e8729a] hover:bg-[#c4507a] text-white rounded-full">
+              <Plus className="w-4 h-4 mr-1" /> Create First Goal
+            </Button>
+          </Card>
+        )}
       </div>
     </div>
   );

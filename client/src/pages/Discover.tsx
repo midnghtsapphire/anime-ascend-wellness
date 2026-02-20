@@ -1,216 +1,84 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Search, Filter, Heart, Bookmark } from "lucide-react";
-import { useState } from "react";
+import { getLoginUrl } from "@/const";
+import { Link } from "wouter";
+import { Compass, ArrowLeft, HeartPulse, Brain, Wind, Star, Target, BookOpen, Sparkles } from "lucide-react";
+
+const activities = [
+  { id: 'heart-check', name: 'Heart Health Check', desc: 'Monitor your heart rate and detect irregularities', icon: HeartPulse, color: '#d4556b', path: '/health', category: 'health' },
+  { id: 'stress-relief', name: 'Stress Relief Session', desc: 'Guided breathing to lower your stress levels', icon: Brain, color: '#e8a849', path: '/companion', category: 'health' },
+  { id: 'box-breathing', name: 'Box Breathing', desc: '4-4-4-4 breathing technique for instant calm', icon: Wind, color: '#7ab8c4', path: '/companion', category: 'breathing' },
+  { id: 'gratitude', name: 'Gratitude Journal', desc: 'Write about what you are grateful for today', icon: BookOpen, color: '#7ab87a', path: '/journal', category: 'mindfulness' },
+  { id: 'goal-setting', name: 'Set a New Goal', desc: 'Define what you want to achieve this month', icon: Target, color: '#e8729a', path: '/goals', category: 'growth' },
+  { id: 'meditation', name: 'Morning Meditation', desc: 'Start your day with 5 minutes of calm', icon: Star, color: '#e8a849', path: '/meditation', category: 'mindfulness' },
+  { id: 'body-scan', name: 'Body Scan', desc: 'Connect with your body and release tension', icon: Sparkles, color: '#7ab8c4', path: '/meditation', category: 'mindfulness' },
+  { id: 'habit-review', name: 'Habit Review', desc: 'Check your streaks and log today\'s habits', icon: Target, color: '#7ab87a', path: '/habits', category: 'growth' },
+];
+
+const moods = [
+  { id: 'stressed', label: 'Stressed', emoji: '😰' },
+  { id: 'anxious', label: 'Anxious', emoji: '💭' },
+  { id: 'tired', label: 'Tired', emoji: '😴' },
+  { id: 'energized', label: 'Energized', emoji: '✨' },
+  { id: 'calm', label: 'Calm', emoji: '🌸' },
+];
 
 export default function Discover() {
-  const { isAuthenticated } = useAuth();
-  const [selectedMood, setSelectedMood] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const { isAuthenticated, loading } = useAuth();
 
-  const moods = [
-    { id: "energized", label: "Energized", emoji: "⚡", color: "from-amber-500" },
-    { id: "calm", label: "Calm", emoji: "🌊", color: "from-cyan-500" },
-    { id: "focused", label: "Focused", emoji: "🎯", color: "from-blue-500" },
-    { id: "creative", label: "Creative", emoji: "✨", color: "from-purple-500" },
-    { id: "grateful", label: "Grateful", emoji: "🙏", color: "from-green-500" },
-  ];
-
-  const categories = [
-    { id: "all", label: "All" },
-    { id: "meditation", label: "Meditation" },
-    { id: "exercise", label: "Exercise" },
-    { id: "learning", label: "Learning" },
-    { id: "creativity", label: "Creativity" },
-    { id: "social", label: "Social" },
-  ];
-
-  const activities = [
-    {
-      id: 1,
-      title: "5-Minute Breathing",
-      category: "meditation",
-      mood: "calm",
-      description: "Quick breathing exercise to center yourself",
-      duration: "5 min",
-      level: "Beginner",
-      likes: 234,
-    },
-    {
-      id: 2,
-      title: "Morning Yoga Flow",
-      category: "exercise",
-      mood: "energized",
-      description: "Energizing yoga routine to start your day",
-      duration: "15 min",
-      level: "Beginner",
-      likes: 456,
-    },
-    {
-      id: 3,
-      title: "Creative Writing Prompt",
-      category: "creativity",
-      mood: "creative",
-      description: "Unlock your creativity with guided prompts",
-      duration: "20 min",
-      level: "Intermediate",
-      likes: 189,
-    },
-    {
-      id: 4,
-      title: "Gratitude Meditation",
-      category: "meditation",
-      mood: "grateful",
-      description: "Cultivate gratitude and appreciation",
-      duration: "10 min",
-      level: "Beginner",
-      likes: 312,
-    },
-    {
-      id: 5,
-      title: "Focus Music Session",
-      category: "learning",
-      mood: "focused",
-      description: "Deep focus music for productivity",
-      duration: "60 min",
-      level: "All",
-      likes: 567,
-    },
-    {
-      id: 6,
-      title: "Group Meditation",
-      category: "social",
-      mood: "calm",
-      description: "Meditate with others in our community",
-      duration: "30 min",
-      level: "Beginner",
-      likes: 298,
-    },
-  ];
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-900 to-slate-800 flex items-center justify-center">
-        <Card className="text-center p-8">
-          <h2 className="text-2xl font-bold text-white mb-4">Please sign in</h2>
-        </Card>
-      </div>
-    );
+  if (loading) {
+    return <div className="min-h-screen bg-background flex items-center justify-center"><div className="w-12 h-12 rounded-full border-4 border-[#f5a3c0] border-t-[#e8729a] animate-spin" /></div>;
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
-      {/* Header */}
-      <div className="border-b border-slate-700/50 bg-slate-900/80 backdrop-blur-md sticky top-0 z-40">
-        <div className="container py-4">
-          <h1 className="text-2xl font-bold text-white mb-4">Discover Wellness</h1>
-          <p className="text-slate-400 mb-4">Find activities that match your mood and goals</p>
-
-          {/* Search */}
-          <div className="relative">
-            <Search className="absolute left-3 top-3 w-5 h-5 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search activities..."
-              className="w-full bg-slate-800 border border-slate-700 rounded-lg pl-10 pr-4 py-2 text-white placeholder-slate-400 focus:border-teal-500 focus:outline-none"
-            />
+    <div className="min-h-screen bg-background">
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-[#f5a3c0]/20">
+        <div className="container flex items-center justify-between h-14">
+          <div className="flex items-center gap-3">
+            <Link href="/dashboard"><Button variant="ghost" size="sm" className="text-[#8a7075]"><ArrowLeft className="w-4 h-4 mr-1" /> Back</Button></Link>
+            <div className="flex items-center gap-2">
+              <Compass className="w-5 h-5 text-[#e8729a]" />
+              <span className="font-bold text-[#3d2b2e]">Discover</span>
+            </div>
           </div>
         </div>
-      </div>
+      </header>
 
-      <div className="container py-8">
-        {/* Mood Filter */}
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold text-white mb-4">How are you feeling?</h3>
-          <div className="flex gap-3 overflow-x-auto pb-2">
-            {moods.map((mood) => (
-              <button
-                key={mood.id}
-                onClick={() => setSelectedMood(selectedMood === mood.id ? null : mood.id)}
-                className={`flex-shrink-0 px-4 py-3 rounded-lg border-2 transition-all ${
-                  selectedMood === mood.id
-                    ? "border-teal-500 bg-teal-500/20"
-                    : "border-slate-700 hover:border-slate-600 bg-slate-800/50"
-                }`}
-              >
-                <span className="text-2xl mr-2">{mood.emoji}</span>
-                <span className="text-white font-medium">{mood.label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Category Filter */}
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold text-white mb-4">Browse by Category</h3>
-          <div className="flex gap-2 overflow-x-auto pb-2">
-            {categories.map((cat) => (
-              <Button
-                key={cat.id}
-                variant={selectedCategory === cat.id ? "default" : "outline"}
-                className={
-                  selectedCategory === cat.id
-                    ? "bg-teal-500 hover:bg-teal-600"
-                    : "border-slate-600"
-                }
-                onClick={() => setSelectedCategory(selectedCategory === cat.id ? null : cat.id)}
-              >
-                {cat.label}
-              </Button>
-            ))}
-          </div>
-        </div>
-
-        {/* Activities Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {activities.map((activity) => (
-            <Card
-              key={activity.id}
-              className="bg-slate-800/50 border-slate-700 overflow-hidden hover:border-teal-500/50 transition-all group cursor-pointer"
-            >
-              {/* Header */}
-              <div className="bg-gradient-to-r from-teal-500/20 to-pink-500/20 p-6 pb-4">
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <h3 className="text-lg font-bold text-white">{activity.title}</h3>
-                    <p className="text-sm text-slate-400 mt-1">{activity.category}</p>
-                  </div>
-                  <button className="text-slate-400 hover:text-pink-400 transition-colors">
-                    <Bookmark className="w-5 h-5" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Content */}
-              <div className="p-6 pt-4">
-                <p className="text-slate-300 mb-4 text-sm">{activity.description}</p>
-
-                {/* Meta */}
-                <div className="flex items-center justify-between mb-4 text-xs text-slate-400">
-                  <span>{activity.duration}</span>
-                  <span>{activity.level}</span>
-                  <span className="flex items-center gap-1">
-                    <Heart className="w-3 h-3" />
-                    {activity.likes}
-                  </span>
-                </div>
-
-                {/* CTA */}
-                <Button className="w-full bg-teal-500 hover:bg-teal-600">
-                  Start Now
-                </Button>
-              </div>
-            </Card>
+      <div className="container py-6 max-w-2xl mx-auto">
+        <h3 className="font-bold text-[#3d2b2e] mb-3">How are you feeling?</h3>
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-1">
+          {moods.map(mood => (
+            <button key={mood.id} className="px-4 py-2 rounded-full bg-[#fdf2f4] text-[#3d2b2e] text-sm font-medium hover:bg-[#f5a3c0]/20 transition-all whitespace-nowrap">
+              {mood.emoji} {mood.label}
+            </button>
           ))}
         </div>
 
-        {/* Empty State */}
-        {activities.length === 0 && (
-          <Card className="bg-slate-800/50 border-slate-700 p-12 text-center">
-            <Filter className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-white mb-2">No activities found</h3>
-            <p className="text-slate-400">Try adjusting your filters</p>
+        <h3 className="font-bold text-[#3d2b2e] mb-3">Wellness Activities</h3>
+        <div className="space-y-3">
+          {activities.map(activity => (
+            <Link key={activity.id} href={isAuthenticated ? activity.path : '#'}>
+              <Card className="p-4 bg-white border-[#f5a3c0]/20 hover:border-[#f5a3c0]/40 hover:shadow-md transition-all cursor-pointer">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ backgroundColor: `${activity.color}15` }}>
+                    <activity.icon className="w-6 h-6" style={{ color: activity.color }} />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-bold text-[#3d2b2e]">{activity.name}</h4>
+                    <p className="text-sm text-[#8a7075]">{activity.desc}</p>
+                    <span className="text-xs bg-[#fdf2f4] text-[#c4507a] px-2 py-0.5 rounded-full mt-1 inline-block capitalize">{activity.category}</span>
+                  </div>
+                </div>
+              </Card>
+            </Link>
+          ))}
+        </div>
+
+        {!isAuthenticated && (
+          <Card className="p-6 bg-white border-[#f5a3c0]/20 mt-6 text-center">
+            <p className="text-[#8a7075] mb-4">Sign in to access all wellness activities</p>
+            <a href={getLoginUrl()}><Button className="bg-[#e8729a] hover:bg-[#c4507a] text-white rounded-full px-8">Sign In</Button></a>
           </Card>
         )}
       </div>

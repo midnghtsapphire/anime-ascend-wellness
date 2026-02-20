@@ -14,6 +14,12 @@ import {
   milestones,
   tokenTransactions,
   supportTickets,
+  emergencyContacts,
+  heartReadings,
+  stressReadings,
+  fallEvents,
+  exerciseSessions,
+  healthAlerts,
 } from "../drizzle/schema";
 import { createCheckoutSession } from "./stripe-checkout";
 import { TRPCError } from "@trpc/server";
@@ -377,6 +383,197 @@ export const appRouter = router({
           origin
         );
         return { checkoutUrl };
+      }),
+  }),
+
+  // ============================================================================
+  // EMERGENCY CONTACTS
+  // ============================================================================
+  emergency: router({
+    listContacts: protectedProcedure.query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) return [];
+      return db
+        .select()
+        .from(emergencyContacts)
+        .where(eq(emergencyContacts.userId, ctx.user.id));
+    }),
+
+    addContact: protectedProcedure
+      .input(
+        z.object({
+          name: z.string().min(1),
+          phone: z.string().min(1),
+          email: z.string().optional(),
+          relationship: z.string().optional(),
+          isPrimary: z.boolean().default(false),
+          notifyOnFall: z.boolean().default(true),
+          notifyOnArrhythmia: z.boolean().default(true),
+          notifyOnStress: z.boolean().default(false),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database unavailable");
+        await db.insert(emergencyContacts).values({
+          userId: ctx.user.id,
+          name: input.name,
+          phone: input.phone,
+          email: input.email,
+          relationship: input.relationship,
+          isPrimary: input.isPrimary,
+          notifyOnFall: input.notifyOnFall,
+          notifyOnArrhythmia: input.notifyOnArrhythmia,
+          notifyOnStress: input.notifyOnStress,
+        });
+        return { success: true };
+      }),
+
+    removeContact: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database unavailable");
+        await db
+          .delete(emergencyContacts)
+          .where(
+            and(eq(emergencyContacts.id, input.id), eq(emergencyContacts.userId, ctx.user.id))
+          );
+        return { success: true };
+      }),
+  }),
+
+  // ============================================================================
+  // HEALTH MONITORING
+  // ============================================================================
+  health: router({
+    saveHeartReading: protectedProcedure
+      .input(
+        z.object({
+          bpm: z.number(),
+          hrv: z.string().optional(),
+          rhythmStatus: z.enum(["normal", "irregular", "arrhythmia_detected", "tachycardia", "bradycardia"]).default("normal"),
+          confidence: z.string().optional(),
+          duration: z.number().optional(),
+          notes: z.string().optional(),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database unavailable");
+        await db.insert(heartReadings).values({
+          userId: ctx.user.id,
+          bpm: input.bpm,
+          hrv: input.hrv,
+          rhythmStatus: input.rhythmStatus,
+          confidence: input.confidence,
+          duration: input.duration,
+          notes: input.notes,
+        });
+        return { success: true };
+      }),
+
+    getHeartHistory: protectedProcedure.query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) return [];
+      return db
+        .select()
+        .from(heartReadings)
+        .where(eq(heartReadings.userId, ctx.user.id))
+        .orderBy(desc(heartReadings.createdAt))
+        .limit(50);
+    }),
+
+    saveStressReading: protectedProcedure
+      .input(
+        z.object({
+          stressLevel: z.number().min(0).max(100),
+          heartRateAtReading: z.number().optional(),
+          isEpisode: z.boolean().default(false),
+          notes: z.string().optional(),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database unavailable");
+        await db.insert(stressReadings).values({
+          userId: ctx.user.id,
+          stressLevel: input.stressLevel,
+          heartRateAtReading: input.heartRateAtReading,
+          isEpisode: input.isEpisode,
+          notes: input.notes,
+        });
+        return { success: true };
+      }),
+
+    saveFallEvent: protectedProcedure
+      .input(
+        z.object({
+          severity: z.enum(["mild", "moderate", "severe"]).default("moderate"),
+          impactForce: z.string().optional(),
+          location: z.string().optional(),
+          falseAlarm: z.boolean().default(false),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database unavailable");
+        await db.insert(fallEvents).values({
+          userId: ctx.user.id,
+          severity: input.severity,
+          impactForce: input.impactForce,
+          location: input.location,
+          falseAlarm: input.falseAlarm,
+        });
+        return { success: true };
+      }),
+
+    saveExerciseSession: protectedProcedure
+      .input(
+        z.object({
+          type: z.enum(["breathing", "grounding", "stretching", "cardiac_recovery", "stress_relief", "meditation", "progressive_relaxation"]),
+          trigger: z.enum(["arrhythmia", "stress_episode", "fall_recovery", "manual", "scheduled"]).default("manual"),
+          duration: z.number().optional(),
+          completedSteps: z.number().optional(),
+          totalSteps: z.number().optional(),
+          heartRateBefore: z.number().optional(),
+          heartRateAfter: z.number().optional(),
+          stressBefore: z.number().optional(),
+          stressAfter: z.number().optional(),
+          completed: z.boolean().default(false),
+        })
+      )
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database unavailable");
+        await db.insert(exerciseSessions).values({
+          userId: ctx.user.id,
+          ...input,
+        });
+        return { success: true };
+      }),
+
+    getAlerts: protectedProcedure.query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) return [];
+      return db
+        .select()
+        .from(healthAlerts)
+        .where(eq(healthAlerts.userId, ctx.user.id))
+        .orderBy(desc(healthAlerts.createdAt))
+        .limit(20);
+    }),
+
+    acknowledgeAlert: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database unavailable");
+        await db
+          .update(healthAlerts)
+          .set({ acknowledged: true, acknowledgedAt: new Date() })
+          .where(and(eq(healthAlerts.id, input.id), eq(healthAlerts.userId, ctx.user.id)));
+        return { success: true };
       }),
   }),
 

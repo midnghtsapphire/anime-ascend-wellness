@@ -32,11 +32,11 @@
 - [x] Pricing page with tiers (Free, Premium, Pro)
 - [x] Token/credit economy (free tier + paid tokens for bulk usage)
 - [ ] Admin dashboard (user stats, revenue, subscriptions, moderation)
-- [ ] WCAG AAA compliance mode
-- [ ] ECO CODE mode (low energy, reduced animations, dark backgrounds)
-- [ ] NEURO CODE mode (ADHD-friendly, reduced clutter, focus mode)
-- [ ] DYSLEXIC MODE (OpenDyslexic font, increased spacing, high contrast)
-- [ ] NO BLUE LIGHT mode (warm color filter toggle, removes blue wavelengths)
+- [x] WCAG AAA compliance mode (CSS + Settings toggle)
+- [x] ECO CODE mode (low energy, reduced animations, dark backgrounds)
+- [x] NEURO CODE mode (ADHD-friendly, reduced clutter, focus mode)
+- [x] DYSLEXIC MODE (OpenDyslexic font, increased spacing, high contrast)
+- [x] NO BLUE LIGHT mode (warm color filter toggle, removes blue wavelengths)
 - [x] Settings page (account, accessibility, billing, notifications)
 - [ ] Payment failure handling (dunning emails, retry logic, grace periods)
 - [ ] Self-healing error recovery
@@ -45,10 +45,29 @@
 - [x] Support page (chat, FAQ, contact, refund)
 - [ ] Payment failure handling (dunning, retry, grace)
 - [ ] Self-healing error recovery
-- [x] Vitest unit tests for backend (11/11 passing)
+- [x] Vitest unit tests for backend (21/21 passing)
 - [ ] Login/Signup pages
 
 ## Phase 6: Deploy & Ship
 - [ ] Push to GitHub (MIDNGHTSAPPHIRE/seishun-wellness)
 - [ ] Add to meetaudreyevans.com hub
 - [ ] Save checkpoint and deploy
+
+## CRITICAL UPDATE — Core Health Monitoring Features (PRIMARY PURPOSE)
+- [x] Retheme: White background, cherry blossom branches, soft pinks, Japanese minimalism
+- [x] Retheme: Chibi mascot character (Hana) as guide/companion
+- [x] Heart Arrhythmia Detection (PPG via phone camera + flash)
+- [x] Heart Rate Variability (HRV) monitoring
+- [x] Stress Detection (biometric signals monitoring)
+- [x] Fall Detection (accelerometer/gyroscope)
+- [x] Guided Exercises (companion stays with user through session)
+- [x] Companion Mode (active presence during health episodes)
+- [x] Emergency Alerts (alert emergency contacts on fall/concerning vitals)
+- [x] Emergency Contacts management page
+- [x] Health Dashboard (primary view — vitals, alerts, history)
+- [x] Update navigation: Health features are PRIMARY, habits/journal are SECONDARY
+- [x] Backend: health readings, alerts, emergency contacts, exercise sessions tables
+- [x] Backend: tRPC routers for all health features
+- [x] Update tests for health features (21/21 passing)
+- [ ] Push to GitHub MIDNGHTSAPPHIRE/anime-ascend-wellness
+- [ ] Add to meetaudreyevans.com hub

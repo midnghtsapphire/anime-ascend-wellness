@@ -1,339 +1,99 @@
-# Anime Ascend Wellness — Product Roadmap
+# Anime Ascend — Product Roadmap
 
-## Vision
+## Phase 1: Core Health Monitoring (Complete)
 
-Transform personal growth through anime-inspired wellness. Build a thriving community where users track habits, journal reflections, meditate, set goals, and discover wellness activities—all powered by AI and anime aesthetics.
+**Status:** Live | **Launch Date:** 2026-02-20
 
----
+- [x] Heart rate monitoring via PPG (phone camera + flash)
+- [x] Arrhythmia detection and HRV tracking
+- [x] Stress detection with biometric signals
+- [x] Fall detection via accelerometer/gyroscope
+- [x] Companion Mode with Hana chibi mascot
+- [x] Guided exercises (box breathing, grounding, body scan, progressive relaxation)
+- [x] Emergency contact management and alert system
+- [x] Health dashboard with vitals overview
+- [x] Cherry blossom / Japanese minimalism design (white bg, soft pinks)
 
-## Phase 1: MVP (COMPLETE ✓)
+## Phase 2: Wellness Features (Complete)
 
-**Status:** Live
-**Launch Date:** 2026-02-20
+- [x] Habit tracking with streaks and categories
+- [x] Guided journaling with mood tracking
+- [x] Meditation with breathing exercises and ambient timer
+- [x] Goal setting with milestone tracking
+- [x] Discover page for wellness activities by mood
+- [x] Settings with 5 accessibility modes (WCAG AAA, ECO CODE, NEURO CODE, Dyslexic, No Blue Light)
 
-### Features
-- [x] User authentication (Manus OAuth)
-- [x] Dashboard with mood check-in
-- [x] Habit tracking with streaks
-- [x] Journal entries with mood logging
-- [x] Meditation timer with breathing exercises
-- [x] Goal setting and milestone tracking
-- [x] Discover page for wellness activities
-- [x] Pricing page with 3 tiers
-- [x] Stripe billing integration
-- [x] Token/credit economy
+## Phase 3: Platform & Billing (Complete)
+
+- [x] Manus OAuth authentication
+- [x] Stripe billing (Blossom Free / Sakura $9.99 / Hanami $19.99)
+- [x] Token economy for AI coach features
 - [x] Support ticket system
-- [x] Settings page with accessibility modes
+- [x] Full documentation (Blueprint, API, Schema, Roadmap, Deployment)
 - [x] 11/11 tests passing
 
-### Metrics
-- **Users:** 0 → 100 (first month)
-- **MRR Target:** $500
-- **Retention:** 30-day > 40%
+## Phase 4: AI & Smart Health (Q2 2026)
+
+- [ ] AI wellness coach (personalized recommendations via LLM)
+- [ ] Smart stress prediction (pattern recognition from HRV data)
+- [ ] Automated exercise suggestions based on health readings
+- [ ] Natural language journaling analysis
+- [ ] Mood trend insights and weekly reports
+- [ ] Predictive arrhythmia alerts
+
+## Phase 5: Connected Health (Q3 2026)
+
+- [ ] Apple Health / Google Fit integration
+- [ ] Wearable device sync (Apple Watch, Fitbit, Garmin)
+- [ ] Continuous background heart rate monitoring
+- [ ] Sleep tracking integration
+- [ ] Activity and exercise data import
+- [ ] Blood oxygen (SpO2) tracking
+
+## Phase 6: Community & Social (Q4 2026)
+
+- [ ] User profiles and wellness journeys
+- [ ] Community wellness challenges
+- [ ] Peer support groups
+- [ ] Shared wellness goals
+- [ ] Achievement badges and rewards
+- [ ] Caregiver dashboard (family monitoring)
+
+## Phase 7: Mobile & Enterprise (Q1 2027)
+
+- [ ] React Native mobile app (iOS + Android)
+- [ ] Push notifications for health alerts
+- [ ] Offline mode for exercises
+- [ ] B2B corporate wellness programs
+- [ ] Enterprise admin dashboard
+- [ ] HIPAA compliance pathway
+- [ ] Internationalization (Japanese, Spanish, Chinese)
 
 ---
 
-## Phase 2: Community & AI (Q2 2026)
+## Revenue Targets
 
-**Estimated Duration:** 8 weeks
-**Team:** 2-3 engineers
-
-### Features
-- [ ] User profiles with avatars
-- [ ] Follow/unfollow system
-- [ ] Share achievements and streaks
-- [ ] Community leaderboards (weekly/monthly)
-- [ ] AI Wellness Coach (LLM-powered recommendations)
-- [ ] Personalized habit suggestions
-- [ ] Weekly wellness challenges
-- [ ] Achievement badges and gamification
-- [ ] Comment system on shared entries
-
-### Technical
-- [ ] Implement LLM integration (OpenRouter)
-- [ ] Add real-time notifications (WebSocket)
-- [ ] Create leaderboard ranking system
-- [ ] Build achievement badge system
-
-### Success Metrics
-- **DAU Growth:** 100 → 500
-- **Engagement:** Session duration > 15 min
-- **Community:** 50+ active users sharing
-
----
-
-## Phase 3: Mobile App (Q3 2026)
-
-**Estimated Duration:** 12 weeks
-**Team:** 3-4 engineers (React Native)
-
-### Features
-- [ ] iOS app (React Native)
-- [ ] Android app (React Native)
-- [ ] Push notifications
-- [ ] Offline mode (sync when online)
-- [ ] Apple Health integration
-- [ ] Google Fit integration
-- [ ] Home screen widgets
-- [ ] Wearable support (Apple Watch, Wear OS)
-
-### Technical
-- [ ] React Native setup
-- [ ] Firebase Cloud Messaging
-- [ ] HealthKit/Google Fit APIs
-- [ ] Local SQLite database
-
-### Success Metrics
-- **Downloads:** 1000+
-- **App Store Rating:** 4.5+
-- **DAU:** 50% of web users
-
----
-
-## Phase 4: Accessibility & Localization (Q4 2026)
-
-**Estimated Duration:** 8 weeks
-**Team:** 2 engineers + 1 QA
-
-### Features
-- [x] WCAG AAA compliance (already implemented)
-- [x] ECO CODE mode (already implemented)
-- [x] NEURO CODE mode (already implemented)
-- [x] Dyslexic mode (already implemented)
-- [x] No Blue Light mode (already implemented)
-- [ ] Internationalization (i18n)
-- [ ] Japanese translation (primary market)
-- [ ] Spanish translation
-- [ ] Chinese translation
-- [ ] Screen reader optimization
-- [ ] Keyboard navigation audit
-
-### Technical
-- [ ] i18n library setup (next-i18next)
-- [ ] Translation management system
-- [ ] RTL language support
-- [ ] Accessibility audit tools
-
-### Success Metrics
-- **Accessibility Score:** WCAG AAA 100%
-- **International Users:** 30% of total
-- **Localization:** 4+ languages
-
----
-
-## Phase 5: B2B & Enterprise (Q1 2027)
-
-**Estimated Duration:** 16 weeks
-**Team:** 4-5 engineers
-
-### Features
-- [ ] Admin dashboard (user management, analytics)
-- [ ] Organization/team workspaces
-- [ ] Group challenges and team goals
-- [ ] Corporate wellness programs
-- [ ] API for third-party integrations
-- [ ] White-label option
-- [ ] SSO (SAML/OAuth2)
-- [ ] Advanced analytics and reporting
-- [ ] Bulk user import/export
-- [ ] Custom branding
-
-### Technical
-- [ ] Admin panel with React
-- [ ] Multi-tenant architecture
-- [ ] API rate limiting and quotas
-- [ ] SAML/OAuth2 implementation
-- [ ] Advanced analytics pipeline
-
-### Success Metrics
-- **B2B Revenue:** $5000+ MRR
-- **Enterprise Customers:** 5+
-- **API Usage:** 1M+ calls/month
-
----
-
-## Phase 6: Advanced Features (Q2 2027)
-
-**Estimated Duration:** Ongoing
-
-### Features
-- [ ] Video meditation library (partnership with studios)
-- [ ] Podcast integration
-- [ ] Anime collaboration content
-- [ ] Merchandise store
-- [ ] Subscription bundles (wellness + anime)
-- [ ] Virtual wellness retreats
-- [ ] 1-on-1 coaching marketplace
-- [ ] Premium content (exclusive meditations)
-- [ ] Habit analytics with ML insights
-- [ ] Predictive wellness recommendations
-
-### Technical
-- [ ] Video streaming infrastructure
-- [ ] Machine learning pipeline
-- [ ] Recommendation engine
-- [ ] E-commerce integration
-
-### Success Metrics
-- **Premium Content Revenue:** $2000+ MRR
-- **Marketplace Coaches:** 50+
-- **Content Library:** 500+ items
-
----
-
-## Revenue Roadmap
-
-### Year 1 (2026)
-- Q1: MVP launch, 100 users, $500 MRR
-- Q2: Community features, 500 users, $2000 MRR
-- Q3: Mobile app launch, 1000 users, $5000 MRR
-- Q4: Localization, 2000 users, $8000 MRR
-
-### Year 2 (2027)
-- Q1: B2B program, 3000 users, $15000 MRR
-- Q2: Advanced features, 5000 users, $25000 MRR
-- Q3: Scaling, 10000 users, $50000 MRR
-- Q4: Profitability, 15000 users, $75000 MRR
-
-### Year 3+ (2028+)
-- Sustainable growth (20-30% YoY)
-- International expansion
-- Acquisition opportunities
-- IPO or strategic exit
-
----
-
-## Marketing Roadmap
-
-### Phase 1: Awareness (Months 1-3)
-- TikTok: Anime wellness clips (3x/week)
-- Instagram: Habit tracking tips (daily)
-- Reddit: r/anime, r/wellness communities
-- YouTube: Meditation guides (weekly)
-- Press: Tech blogs, wellness publications
-
-### Phase 2: Engagement (Months 4-6)
-- Discord community server
-- Email newsletter (weekly)
-- Influencer partnerships (anime creators)
-- Affiliate program launch
-- Community challenges
-
-### Phase 3: Growth (Months 7-12)
-- Podcast sponsorships
-- Anime studio partnerships
-- Referral program
-- App store optimization
-- Paid ads (TikTok, Instagram, YouTube)
-
----
-
-## Technical Debt & Maintenance
-
-### Ongoing
-- Security audits (quarterly)
-- Performance optimization
-- Dependency updates
-- Database optimization
-- Code refactoring
-
-### Planned
-- [ ] Migrate to TypeScript strict mode
-- [ ] Implement comprehensive logging
-- [ ] Add distributed tracing
-- [ ] Upgrade to latest React version
-- [ ] Implement caching layer (Redis)
-- [ ] Database sharding strategy
-
----
-
-## Success Metrics (Overall)
-
-| Metric | 6 Months | 12 Months | 24 Months |
-|--------|----------|-----------|-----------|
-| **Users** | 500 | 2000 | 15000 |
-| **DAU** | 100 | 600 | 5000 |
-| **MRR** | $2000 | $8000 | $75000 |
-| **Retention (30d)** | 40% | 50% | 60% |
-| **NPS** | 30 | 45 | 55 |
-| **Churn** | 15% | 10% | 5% |
-
----
-
-## Dependencies & Risks
-
-### Technical Risks
-- **LLM API costs:** Monitor usage, implement rate limiting
-- **Database scaling:** Plan for sharding at 100k users
-- **Mobile app complexity:** Start with MVP, iterate
-- **Payment processing:** Stripe reliability, PCI compliance
-
-### Market Risks
-- **Competition:** Anime wellness market growing
-- **User acquisition:** High CAC in wellness space
-- **Retention:** Habit tracking apps have high churn
-- **Monetization:** Free users may resist premium
-
-### Mitigation
-- Build strong community (reduce churn)
-- Focus on anime differentiation
-- Partner with anime studios
-- Implement referral program
-- A/B test pricing models
-
----
-
-## Team & Resources
-
-### Current Team
-- 1 Full-stack engineer (you)
-- 1 Designer (TBD)
-- 1 Product manager (TBD)
-
-### Phase 2 Hiring
-- 1 Backend engineer
-- 1 Frontend engineer
-- 1 QA engineer
-
-### Phase 3 Hiring
-- 2 React Native engineers
-- 1 DevOps engineer
-- 1 Data analyst
-
----
-
-## Budget Estimate
-
-### Year 1
-- Development: $80,000
-- Infrastructure: $5,000
-- Marketing: $10,000
-- Operations: $5,000
-- **Total:** $100,000
-
-### Year 2
-- Development: $150,000
-- Infrastructure: $15,000
-- Marketing: $30,000
-- Operations: $10,000
-- **Total:** $205,000
+| Quarter | Users | MRR |
+|---------|-------|-----|
+| Q1 2026 | 100 | $500 |
+| Q2 2026 | 500 | $2,000 |
+| Q3 2026 | 1,000 | $5,000 |
+| Q4 2026 | 2,000 | $8,000 |
+| Q1 2027 | 3,000 | $15,000 |
+| Q2 2027 | 5,000 | $25,000 |
 
 ---
 
 ## Key Milestones
 
-- [x] **2026-02-20:** MVP Launch
+- [x] **2026-02-20:** MVP Launch with health monitoring
 - [ ] **2026-04-20:** 100 paying users
-- [ ] **2026-06-20:** Community features live
-- [ ] **2026-08-20:** Mobile app launch
-- [ ] **2026-10-20:** Localization complete
-- [ ] **2026-12-20:** Break even ($8000 MRR)
-- [ ] **2027-02-20:** B2B program launch
-- [ ] **2027-06-20:** $25,000 MRR
-- [ ] **2027-12-20:** Profitability
+- [ ] **2026-06-20:** AI coach features live
+- [ ] **2026-08-20:** Wearable integration
+- [ ] **2026-10-20:** Community features
+- [ ] **2026-12-20:** Break even ($8,000 MRR)
+- [ ] **2027-02-20:** Mobile app launch
 
 ---
 
-**Last Updated:** 2026-02-20
-**Next Review:** 2026-03-20
-**Status:** On Track
+**Last Updated:** 2026-02-20 | **Version:** 2.0.0 (Health Monitoring Update)

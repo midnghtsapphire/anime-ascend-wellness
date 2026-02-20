@@ -31,78 +31,146 @@ function createAuthContext(): { ctx: TrpcContext } {
   return { ctx };
 }
 
-describe("Habits Router", () => {
-  it("should list habits for authenticated user", async () => {
+describe("Health Monitoring Router", () => {
+  it("should have logReading procedure", async () => {
     const { ctx } = createAuthContext();
     const caller = appRouter.createCaller(ctx);
+    expect(caller.health).toBeDefined();
+    expect(caller.health.logReading).toBeDefined();
+  });
 
-    // This would require database setup
-    // For now, we're testing the structure
+  it("should have getReadings procedure", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+    expect(caller.health.getReadings).toBeDefined();
+  });
+
+  it("should have getLatest procedure", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+    expect(caller.health.getLatest).toBeDefined();
+  });
+
+  it("should have getAlerts procedure", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+    expect(caller.health.getAlerts).toBeDefined();
+  });
+
+  it("should have createAlert procedure", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+    expect(caller.health.createAlert).toBeDefined();
+  });
+});
+
+describe("Emergency Router", () => {
+  it("should have listContacts procedure", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+    expect(caller.emergency).toBeDefined();
+    expect(caller.emergency.listContacts).toBeDefined();
+  });
+
+  it("should have addContact procedure", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+    expect(caller.emergency.addContact).toBeDefined();
+  });
+
+  it("should have removeContact procedure", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+    expect(caller.emergency.removeContact).toBeDefined();
+  });
+
+  it("should have triggerAlert procedure", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+    expect(caller.emergency.triggerAlert).toBeDefined();
+  });
+});
+
+describe("Exercise Sessions Router", () => {
+  it("should have startSession procedure", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+    expect(caller.exercise).toBeDefined();
+    expect(caller.exercise.startSession).toBeDefined();
+  });
+
+  it("should have completeSession procedure", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+    expect(caller.exercise.completeSession).toBeDefined();
+  });
+
+  it("should have getHistory procedure", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
+    expect(caller.exercise.getHistory).toBeDefined();
+  });
+});
+
+describe("Habits Router", () => {
+  it("should have list and create procedures", async () => {
+    const { ctx } = createAuthContext();
+    const caller = appRouter.createCaller(ctx);
     expect(caller.habits).toBeDefined();
     expect(caller.habits.list).toBeDefined();
+    expect(caller.habits.create).toBeDefined();
+    expect(caller.habits.delete).toBeDefined();
   });
 });
 
 describe("Journal Router", () => {
-  it("should list journal entries for authenticated user", async () => {
+  it("should have list and create procedures", async () => {
     const { ctx } = createAuthContext();
     const caller = appRouter.createCaller(ctx);
-
     expect(caller.journal).toBeDefined();
     expect(caller.journal.list).toBeDefined();
+    expect(caller.journal.create).toBeDefined();
+    expect(caller.journal.delete).toBeDefined();
   });
 });
 
 describe("Goals Router", () => {
-  it("should list goals for authenticated user", async () => {
+  it("should have list and create procedures", async () => {
     const { ctx } = createAuthContext();
     const caller = appRouter.createCaller(ctx);
-
     expect(caller.goals).toBeDefined();
     expect(caller.goals.list).toBeDefined();
+    expect(caller.goals.create).toBeDefined();
+    expect(caller.goals.updateProgress).toBeDefined();
   });
 });
 
 describe("Tokens Router", () => {
-  it("should get token balance", async () => {
+  it("should have balance and history procedures", async () => {
     const { ctx } = createAuthContext();
     const caller = appRouter.createCaller(ctx);
-
     expect(caller.tokens).toBeDefined();
     expect(caller.tokens.getBalance).toBeDefined();
-  });
-
-  it("should get token history", async () => {
-    const { ctx } = createAuthContext();
-    const caller = appRouter.createCaller(ctx);
-
     expect(caller.tokens.getHistory).toBeDefined();
+    expect(caller.tokens.use).toBeDefined();
   });
 });
 
 describe("Billing Router", () => {
-  it("should create checkout session", async () => {
+  it("should have createCheckoutSession procedure", async () => {
     const { ctx } = createAuthContext();
     const caller = appRouter.createCaller(ctx);
-
     expect(caller.billing).toBeDefined();
     expect(caller.billing.createCheckoutSession).toBeDefined();
   });
 });
 
 describe("Support Router", () => {
-  it("should create support ticket", async () => {
+  it("should have ticket procedures", async () => {
     const { ctx } = createAuthContext();
     const caller = appRouter.createCaller(ctx);
-
     expect(caller.support).toBeDefined();
     expect(caller.support.createTicket).toBeDefined();
-  });
-
-  it("should list support tickets", async () => {
-    const { ctx } = createAuthContext();
-    const caller = appRouter.createCaller(ctx);
-
     expect(caller.support.listTickets).toBeDefined();
   });
 });
@@ -111,7 +179,6 @@ describe("Auth Router", () => {
   it("should get current user", async () => {
     const { ctx } = createAuthContext();
     const caller = appRouter.createCaller(ctx);
-
     const user = await caller.auth.me();
     expect(user).toBeDefined();
     expect(user?.id).toBe(1);
@@ -121,7 +188,6 @@ describe("Auth Router", () => {
   it("should logout", async () => {
     const { ctx } = createAuthContext();
     const caller = appRouter.createCaller(ctx);
-
     const result = await caller.auth.logout();
     expect(result.success).toBe(true);
   });

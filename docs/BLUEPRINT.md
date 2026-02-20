@@ -1,10 +1,8 @@
-# Anime Ascend Wellness — Project Blueprint
+# Anime Ascend — Project Blueprint
 
-## Overview
+## Vision
 
-**Anime Ascend** is a full-stack wellness platform that combines anime-inspired aesthetics with evidence-based personal growth tools. Users track habits, journal reflections, meditate, set goals, and discover wellness activities—all powered by an AI coach and token-based credit system.
-
-**Core Concept:** Transform personal growth through anime-inspired wellness. "Your Journey to Growth."
+Anime Ascend is a health monitoring and wellness companion app with a Japanese cherry blossom aesthetic. The primary purpose is real-time health monitoring (heart rate, stress, fall detection) with a chibi companion character named Hana who guides users through health episodes and exercises. Secondary features include habit tracking, journaling, meditation, and goal setting.
 
 ---
 
@@ -14,82 +12,103 @@
 
 | Aspect | Details |
 |--------|---------|
-| **Name** | Anime Ascend Wellness |
-| **Tagline** | Your Journey to Growth |
-| **Core Colors** | Teal (#14B8A6), Pink (#EC4899), Slate (#1E293B) |
+| **Name** | Anime Ascend |
+| **Tagline** | Your Wellness Companion |
+| **Core Colors** | Sakura Pink (#e8729a), Soft Pink (#f5a3c0), White (#ffffff), Rose (#fdf2f4) |
+| **Accent Colors** | Warm Gold (#e8a849), Soft Teal (#7ab8c4), Gentle Green (#7ab87a), Deep Rose (#d4556b) |
+| **Text Colors** | Dark (#3d2b2e), Muted (#8a7075) |
 | **Typography** | Outfit (headings), DM Sans (body) |
-| **Design Language** | Anime-inspired, glassmorphism, neon accents, dark mode |
-| **Target Audience** | 16-40 year olds interested in anime, wellness, personal growth |
+| **Design Language** | White backgrounds, cherry blossom branches, Japanese minimalism, chibi mascot |
+| **Mascot** | Hana — a chibi character who guides users through exercises and health episodes |
+| **Target Audience** | Health-conscious users, elderly/sick users needing monitoring, anime fans |
 
 ### 1.2 Core Values
 
-- **Transformation:** Help users become their best selves
-- **Community:** Connect people on similar growth journeys
-- **Accessibility:** 5 accessibility modes for all users
-- **Transparency:** Clear pricing, open API, no hidden features
-- **Sustainability:** ECO CODE mode for low-energy devices
+- **Health First:** Real-time monitoring for heart, stress, and falls
+- **Companion Care:** Hana stays with users during health episodes, not just showing a list
+- **Accessibility:** 5 accessibility modes for all users (WCAG AAA, ECO CODE, NEURO CODE, Dyslexic, No Blue Light)
+- **Elegance:** Dainty, subtle, Japanese minimalism with cherry blossom elements
+- **Privacy:** All health data encrypted and never shared
 
 ---
 
 ## Part 2: Product Architecture
 
-### 2.1 Core Features
+### 2.1 Primary Features (Health Monitoring)
+
+#### **Heart Rate Monitor**
+- PPG (photoplethysmography) via phone camera + flash
+- Real-time heart rate display with animated pulse visualization
+- Arrhythmia detection (irregular rhythm alerts)
+- Heart Rate Variability (HRV) tracking
+- Historical heart rate data with trends
+
+#### **Stress Detection**
+- Biometric signal monitoring (HRV-based stress index)
+- Real-time stress level indicator (Low/Moderate/High/Critical)
+- Automatic guided exercise trigger when stress is elevated
+- Stress history and pattern recognition
+
+#### **Fall Detection**
+- Accelerometer and gyroscope monitoring
+- Automatic fall event detection
+- Emergency contact alert system
+- Configurable sensitivity levels
+- False positive handling with user confirmation
+
+#### **Companion Mode**
+- Hana (chibi mascot) guides users through exercises
+- Active presence during health episodes — stays with user until stable
+- Box breathing (4-4-4-4 pattern)
+- Progressive muscle relaxation
+- Grounding exercises (5-4-3-2-1 technique)
+- Body scan meditation
+- Gentle movement sequences
+- Session tracking with duration and completion
+
+#### **Emergency System**
+- Emergency contact management (name, phone, relationship)
+- Automatic alerts on fall detection
+- Automatic alerts on concerning vital signs
+- One-tap emergency call
+- Location sharing capability
+
+### 2.2 Secondary Features (Wellness)
 
 #### **Dashboard**
-- Daily mood check-in with emoji selector
-- Habit streak tracker with visual progress
-- Quick-access buttons to core features
-- Weekly summary of progress
+- Health vitals overview (heart rate, stress, last check)
+- Companion status with Hana
+- Quick access to health monitoring
+- Habit streak tracker
+- Weekly wellness summary
 
 #### **Habits**
 - Create, track, and log daily habits
-- Visual streak counter (current/target)
-- Categories: Health, Learning, Creativity, Relationships, Finance
-- Emoji/color customization per habit
+- Visual streak counter
+- Categories: Health, Mindfulness, Fitness, Nutrition, Sleep, Social
+- Emoji customization per habit
 
 #### **Journal**
 - Guided journaling prompts
-- Mood logging with 1-10 scale
-- Private/public entry toggle
-- Tag-based organization
+- Mood logging with emoji selector
+- Private entries with tags
 - AI wellness coach suggestions
 
 #### **Meditation**
 - Breathing exercise timer (4-7-8, box breathing)
 - Ambient sound selection
-- Guided meditation library (coming soon)
 - Session history and stats
 
 #### **Goals**
-- Long-term goal setting
-- Milestone breakdown
+- Long-term goal setting with milestones
 - Progress tracking (0-100%)
-- Goal categories and target dates
-- Achievement badges
+- Category organization
+- Target dates
 
 #### **Discover**
 - Browse wellness activities by mood
-- Anime-themed activity cards
-- Filter by category, duration, difficulty
-- Save favorites to dashboard
-
-#### **Pricing & Billing**
-- Free tier: 5 AI messages/month
-- Premium: $9.99/month, 50 AI messages
-- Pro: $19.99/month, 200 AI messages
-- Stripe integration with webhook handling
-
-#### **Settings**
-- Account management
-- 5 accessibility modes (WCAG AAA, ECO CODE, NEURO CODE, Dyslexic, No Blue Light)
-- Billing & subscription management
-- Notification preferences
-
-#### **Support**
-- Contact form with ticket creation
-- FAQ section
-- Live chat placeholder
-- Email support integration
+- Health-focused activity cards
+- Filter by category
 
 ---
 
@@ -107,50 +126,56 @@
 | **Storage** | AWS S3 (file uploads) |
 | **Hosting** | Manus (built-in) |
 | **Testing** | Vitest |
-| **LLM** | OpenRouter (AI coach) |
+| **LLM** | Built-in Forge API (AI coach) |
 
 ### 3.2 Database Schema
 
-**Core Tables:**
-- `users` — User accounts, subscription tier, token balance
+**Health Tables:**
+- `healthReadings` — Heart rate, HRV, stress level, arrhythmia detection
+- `healthAlerts` — Alerts triggered by health events (fall, arrhythmia, high stress)
+- `emergencyContacts` — User emergency contacts with phone and relationship
+- `exerciseSessions` — Guided exercise sessions with Hana (type, duration, completion)
+
+**Wellness Tables:**
 - `habits` — Habit definitions with categories and metadata
 - `habitLogs` — Daily habit completion records
 - `journalEntries` — Journal entries with mood and tags
 - `moodLogs` — Mood tracking history
 - `goals` — User goals with progress tracking
 - `milestones` — Goal sub-tasks and checkpoints
+
+**Business Tables:**
 - `tokenTransactions` — Token purchase/usage history
 - `subscriptions` — Active subscription records with Stripe IDs
-- `payments` — Payment history and receipts
+- `payments` — Payment history
 - `supportTickets` — Customer support tickets
 
 ### 3.3 API Routes (tRPC)
 
 ```
 /api/trpc/
-  ├── auth.me                          (GET current user)
-  ├── auth.logout                      (POST logout)
-  ├── habits.list                      (GET user habits)
-  ├── habits.create                    (POST new habit)
-  ├── habits.delete                    (DELETE habit)
-  ├── habitLogs.log                    (POST habit completion)
-  ├── habitLogs.getStreak              (GET streak count)
-  ├── journal.list                     (GET journal entries)
-  ├── journal.create                   (POST new entry)
-  ├── journal.delete                   (DELETE entry)
-  ├── mood.log                         (POST mood entry)
-  ├── mood.getAverage                  (GET mood average)
-  ├── goals.list                       (GET user goals)
-  ├── goals.create                     (POST new goal)
-  ├── goals.updateProgress             (PATCH goal progress)
-  ├── milestones.list                  (GET goal milestones)
-  ├── milestones.complete              (PATCH milestone)
-  ├── tokens.getBalance                (GET token balance)
-  ├── tokens.getHistory                (GET token transactions)
-  ├── tokens.use                       (POST use tokens)
-  ├── billing.createCheckoutSession    (POST Stripe checkout)
-  ├── support.createTicket             (POST support ticket)
-  └── support.listTickets              (GET user tickets)
+  ├── auth.me / auth.logout
+  ├── health.logReading
+  ├── health.getReadings
+  ├── health.getLatest
+  ├── health.getAlerts
+  ├── health.createAlert
+  ├── emergency.listContacts
+  ├── emergency.addContact
+  ├── emergency.removeContact
+  ├── emergency.triggerAlert
+  ├── exercise.startSession
+  ├── exercise.completeSession
+  ├── exercise.getHistory
+  ├── habits.list / create / delete
+  ├── habitLogs.log / getStreak
+  ├── journal.list / create / delete
+  ├── mood.log / getAverage
+  ├── goals.list / create / updateProgress
+  ├── milestones.list / complete
+  ├── tokens.getBalance / getHistory / use
+  ├── billing.createCheckoutSession
+  └── support.createTicket / listTickets
 ```
 
 ### 3.4 File Structure
@@ -160,8 +185,11 @@ anime-ascend-wellness/
 ├── client/
 │   ├── src/
 │   │   ├── pages/
-│   │   │   ├── Home.tsx
-│   │   │   ├── Dashboard.tsx
+│   │   │   ├── Home.tsx           (Landing page with cherry blossom hero)
+│   │   │   ├── Dashboard.tsx      (Health-first dashboard)
+│   │   │   ├── HealthMonitor.tsx  (Heart rate, stress, fall detection)
+│   │   │   ├── CompanionMode.tsx  (Hana guided exercises)
+│   │   │   ├── Emergency.tsx      (Emergency contacts management)
 │   │   │   ├── Habits.tsx
 │   │   │   ├── Journal.tsx
 │   │   │   ├── Meditation.tsx
@@ -171,16 +199,9 @@ anime-ascend-wellness/
 │   │   │   ├── Support.tsx
 │   │   │   ├── Settings.tsx
 │   │   │   └── NotFound.tsx
-│   │   ├── components/
-│   │   ├── contexts/
-│   │   ├── hooks/
-│   │   ├── lib/
-│   │   ├── config/
-│   │   │   └── brand.ts
+│   │   ├── config/brand.ts
 │   │   ├── App.tsx
-│   │   ├── main.tsx
 │   │   └── index.css
-│   ├── public/
 │   └── index.html
 ├── server/
 │   ├── routers.ts
@@ -188,11 +209,8 @@ anime-ascend-wellness/
 │   ├── products.ts
 │   ├── stripe-checkout.ts
 │   ├── stripe-webhook.ts
-│   ├── auth.logout.test.ts
-│   ├── features.test.ts
 │   └── _core/
-├── drizzle/
-│   └── schema.ts
+├── drizzle/schema.ts
 ├── docs/
 │   ├── BLUEPRINT.md
 │   ├── ROADMAP.md
@@ -200,156 +218,45 @@ anime-ascend-wellness/
 │   ├── SCHEMA.md
 │   └── DEPLOYMENT.md
 ├── package.json
-├── tsconfig.json
 └── README.md
 ```
 
 ---
 
-## Part 4: Operations & Processes
+## Part 4: Subscription Tiers
 
-### 4.1 Development Workflow
-
-1. **Feature Planning:** Add to `todo.md`
-2. **Backend First:** Create schema, tRPC router, tests
-3. **Frontend:** Build UI pages using shadcn/ui
-4. **Integration:** Wire frontend to backend via tRPC hooks
-5. **Testing:** Run `pnpm test` (11/11 tests passing)
-6. **Checkpoint:** Save with `webdev_save_checkpoint`
-7. **Deploy:** Push to GitHub, deploy via Manus
-
-### 4.2 Database Migrations
-
-```bash
-# Update schema in drizzle/schema.ts
-# Push changes
-pnpm db:push
-
-# Verify in database
-# Update db.ts with new queries
-# Update routers.ts with new procedures
-```
-
-### 4.3 Stripe Integration
-
-**Setup:**
-1. Claim sandbox at https://dashboard.stripe.com/claim_sandbox
-2. Copy STRIPE_SECRET_KEY and STRIPE_PUBLISHABLE_KEY
-3. Set STRIPE_WEBHOOK_SECRET in environment
-
-**Testing:**
-- Test card: `4242 4242 4242 4242`
-- Webhook testing via Stripe Dashboard
-
-**Production:**
-- Complete KYC verification
-- Swap test keys for live keys
-- Test with real transactions
-
-### 4.4 Deployment Checklist
-
-- [ ] All tests passing (`pnpm test`)
-- [ ] TypeScript compilation clean (`pnpm check`)
-- [ ] Environment variables set
-- [ ] Database migrations applied
-- [ ] Stripe webhook configured
-- [ ] GitHub repo updated
-- [ ] Manus hub card added
-- [ ] Live URL verified
-- [ ] Smoke tests completed
+| Feature | Blossom (Free) | Sakura ($9.99/mo) | Hanami ($19.99/mo) |
+|---------|----------------|--------------------|--------------------|
+| Heart monitoring | 3x/day | Unlimited | Continuous |
+| Stress detection | Basic | Advanced | Advanced |
+| Fall detection | — | Yes | Yes |
+| Habits | 5 | Unlimited | Unlimited |
+| Journal | 5/month | Unlimited | Unlimited |
+| AI tokens | 3/month | 50/month | 200/month |
+| Companion mode | 3/month | Unlimited | Unlimited |
+| Emergency alerts | — | Yes | Yes |
+| Family monitoring | — | — | Yes |
+| Data export | — | — | Yes |
 
 ---
 
-## Part 5: Growth & Expansion
+## Part 5: Accessibility Modes
 
-### 5.1 Planned Features (Phase 2)
-
-- **AI Wellness Coach:** LLM-powered personalized recommendations
-- **Community:** User profiles, follow, share achievements
-- **Leaderboards:** Weekly/monthly wellness challenges
-- **Integrations:** Apple Health, Google Fit sync
-- **Mobile App:** React Native version
-- **Accessibility:** Full WCAG AAA compliance + 5 modes
-- **Admin Dashboard:** User stats, revenue, moderation
-
-### 5.2 Revenue Model
-
-| Tier | Price | AI Messages | Features |
-|------|-------|------------|----------|
-| Free | $0 | 5/month | Core features |
-| Premium | $9.99/mo | 50/month | Advanced analytics |
-| Pro | $19.99/mo | 200/month | 1-on-1 coaching |
-
-**Additional Revenue:**
-- Premium content (guided meditations)
-- Merchandise
-- Partnerships with anime studios
-- B2B wellness programs
-
-### 5.3 Marketing Channels
-
-- TikTok/Instagram: Anime wellness clips
-- YouTube: Meditation & habit guides
-- Reddit: r/anime, r/wellness communities
-- Discord: Community server
-- Email: Weekly wellness tips
-- SEO: Wellness + anime keywords
-
----
-
-## Part 6: Accessibility & Inclusivity
-
-### 6.1 Five Accessibility Modes
-
-1. **WCAG AAA Compliance:** Enhanced contrast, focus indicators
-2. **ECO CODE:** Low-energy mode (dark bg, reduced animations)
-3. **NEURO CODE:** ADHD-friendly (reduced clutter, focus mode)
-4. **Dyslexic Mode:** OpenDyslexic font, increased spacing
-5. **No Blue Light:** Warm color filter for night use
-
-### 6.2 Inclusive Design Principles
-
-- Support for screen readers
-- Keyboard navigation throughout
-- Color-blind friendly palette
-- Readable font sizes (minimum 16px)
-- Clear error messages
-- Multiple input methods
-
----
-
-## Part 7: Review & Iterate
-
-### 7.1 Success Metrics
-
-- **User Engagement:** Daily active users, session duration
-- **Retention:** 30-day, 90-day retention rates
-- **Revenue:** MRR, LTV, churn rate
-- **Quality:** Bug reports, support tickets, NPS
-
-### 7.2 Feedback Loop
-
-- Monthly user surveys
-- Weekly analytics review
-- Quarterly roadmap planning
-- Community feedback integration
-- A/B testing for major features
-
-### 7.3 Lessons Learned
-
-*[To be filled after launch and iteration]*
+1. **WCAG AAA** — Maximum contrast, large text, visible focus indicators
+2. **ECO CODE** — Dark backgrounds, reduced animations, minimal data usage
+3. **NEURO CODE** — ADHD-friendly, reduced clutter, focus mode
+4. **DYSLEXIC MODE** — OpenDyslexic font, increased letter spacing, high contrast
+5. **NO BLUE LIGHT** — Warm color filter, removes blue wavelengths
 
 ---
 
 ## Contact & Support
 
-- **Email:** support@anime-ascend.com
-- **Discord:** [Community Server]
+- **Email:** support@animeascend.com
 - **GitHub:** https://github.com/MIDNGHTSAPPHIRE/anime-ascend-wellness
-- **Website:** https://anime-ascend.manus.space
 
 ---
 
 **Last Updated:** 2026-02-20
-**Version:** 1.0.0
-**Status:** Live & Ready for Users
+**Version:** 2.0.0 (Health Monitoring Update)
+**Status:** Live

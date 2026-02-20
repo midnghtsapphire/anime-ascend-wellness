@@ -1,331 +1,209 @@
-# Anime Ascend Wellness — Database Schema
+# Anime Ascend — Database Schema
 
-## Overview
+## Health Monitoring Tables
 
-MySQL database with Drizzle ORM. All timestamps stored as UTC Unix timestamps (milliseconds since epoch).
+### `healthReadings`
+| Column | Type | Description |
+|--------|------|-------------|
+| id | INT (PK) | Auto-increment |
+| userId | INT (FK) | References users.id |
+| heartRate | INT | Beats per minute |
+| hrv | DECIMAL(5,2) | Heart rate variability |
+| stressLevel | INT | 1-10 scale |
+| arrhythmiaDetected | BOOLEAN | Irregular rhythm flag |
+| readingType | ENUM | manual, automatic, emergency |
+| createdAt | TIMESTAMP | Reading timestamp |
+
+### `healthAlerts`
+| Column | Type | Description |
+|--------|------|-------------|
+| id | INT (PK) | Auto-increment |
+| userId | INT (FK) | References users.id |
+| alertType | ENUM | fall_detected, arrhythmia, high_stress, low_heart_rate, high_heart_rate |
+| severity | ENUM | low, medium, high, critical |
+| message | TEXT | Alert description |
+| heartRate | INT | Heart rate at alert time |
+| stressLevel | INT | Stress level at alert time |
+| acknowledged | BOOLEAN | User acknowledged flag |
+| createdAt | TIMESTAMP | Alert timestamp |
+
+### `emergencyContacts`
+| Column | Type | Description |
+|--------|------|-------------|
+| id | INT (PK) | Auto-increment |
+| userId | INT (FK) | References users.id |
+| name | VARCHAR(255) | Contact name |
+| phone | VARCHAR(20) | Phone number |
+| relationship | VARCHAR(100) | Relationship |
+| isPrimary | BOOLEAN | Primary contact flag |
+| createdAt | TIMESTAMP | Created |
+
+### `exerciseSessions`
+| Column | Type | Description |
+|--------|------|-------------|
+| id | INT (PK) | Auto-increment |
+| userId | INT (FK) | References users.id |
+| exerciseType | ENUM | box_breathing, deep_breathing, grounding, body_scan, progressive_relaxation, gentle_movement |
+| triggerReason | VARCHAR(255) | Session trigger |
+| durationSeconds | INT | Duration |
+| completionPercentage | INT | 0-100 |
+| moodBefore | INT | Pre-session mood (1-10) |
+| moodAfter | INT | Post-session mood (1-10) |
+| status | ENUM | in_progress, completed, abandoned |
+| startedAt | TIMESTAMP | Session start |
+| completedAt | TIMESTAMP | Session end |
 
 ---
 
-## Tables
+## User Table
 
 ### `users`
-
-Core user account table.
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| `id` | INT | PRIMARY KEY, AUTO_INCREMENT | Unique user ID |
-| `openId` | VARCHAR(64) | NOT NULL, UNIQUE | Manus OAuth identifier |
-| `name` | TEXT | Nullable | User's display name |
-| `email` | VARCHAR(320) | Nullable | User's email address |
-| `loginMethod` | VARCHAR(64) | Nullable | "manus", "google", "apple" |
-| `role` | ENUM | DEFAULT "user" | "user" or "admin" |
-| `subscriptionTier` | VARCHAR(32) | DEFAULT "free" | "free", "premium", "pro" |
-| `subscriptionStatus` | VARCHAR(32) | Nullable | "active", "past_due", "canceled" |
-| `subscriptionEndsAt` | TIMESTAMP | Nullable | When subscription ends |
-| `stripeCustomerId` | VARCHAR(255) | Nullable | Stripe customer ID |
-| `tokenBalance` | INT | DEFAULT 5 | Current token balance |
-| `createdAt` | TIMESTAMP | DEFAULT NOW() | Account creation date |
-| `updatedAt` | TIMESTAMP | DEFAULT NOW() | Last update |
-| `lastSignedIn` | TIMESTAMP | DEFAULT NOW() | Last login |
-
-**Indexes:**
-- PRIMARY KEY: `id`
-- UNIQUE: `openId`
-- INDEX: `email`, `role`, `subscriptionTier`
+| Column | Type | Description |
+|--------|------|-------------|
+| id | INT (PK) | Auto-increment |
+| openId | VARCHAR(64) | Manus OAuth ID (unique) |
+| name | TEXT | Display name |
+| email | VARCHAR(320) | Email |
+| loginMethod | VARCHAR(64) | Auth method |
+| role | ENUM | user, admin |
+| subscriptionTier | VARCHAR(32) | free, premium, pro |
+| stripeCustomerId | VARCHAR(255) | Stripe customer ID |
+| tokenBalance | INT | Token balance (default 5) |
+| createdAt | TIMESTAMP | Created |
+| updatedAt | TIMESTAMP | Updated |
+| lastSignedIn | TIMESTAMP | Last login |
 
 ---
+
+## Wellness Tables
 
 ### `habits`
-
-User habit definitions.
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| `id` | INT | PRIMARY KEY, AUTO_INCREMENT | Unique habit ID |
-| `userId` | INT | NOT NULL, FOREIGN KEY | Reference to `users.id` |
-| `name` | TEXT | NOT NULL | Habit name (e.g., "Morning Meditation") |
-| `description` | TEXT | Nullable | Habit description |
-| `category` | VARCHAR(64) | Nullable | "Health", "Learning", "Creativity", etc. |
-| `emoji` | VARCHAR(10) | Nullable | Emoji representation |
-| `color` | VARCHAR(7) | Nullable | Hex color code |
-| `frequency` | ENUM | DEFAULT "daily" | "daily", "weekly", "monthly" |
-| `targetDays` | INT | DEFAULT 30 | Goal duration in days |
-| `createdAt` | TIMESTAMP | DEFAULT NOW() | Creation date |
-| `updatedAt` | TIMESTAMP | DEFAULT NOW() | Last update |
-
-**Indexes:**
-- PRIMARY KEY: `id`
-- FOREIGN KEY: `userId` → `users.id`
-- INDEX: `userId`, `category`
-
----
+| Column | Type | Description |
+|--------|------|-------------|
+| id | INT (PK) | Auto-increment |
+| userId | INT (FK) | References users.id |
+| name | TEXT | Habit name |
+| category | VARCHAR(64) | Category |
+| emoji | VARCHAR(10) | Emoji icon |
+| frequency | ENUM | daily, weekly, monthly |
+| targetDays | INT | Target days |
+| createdAt | TIMESTAMP | Created |
 
 ### `habitLogs`
-
-Daily habit completion records.
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| `id` | INT | PRIMARY KEY, AUTO_INCREMENT | Unique log ID |
-| `habitId` | INT | NOT NULL, FOREIGN KEY | Reference to `habits.id` |
-| `userId` | INT | NOT NULL, FOREIGN KEY | Reference to `users.id` |
-| `notes` | TEXT | Nullable | Optional notes about completion |
-| `completedAt` | TIMESTAMP | DEFAULT NOW() | When habit was logged |
-
-**Indexes:**
-- PRIMARY KEY: `id`
-- FOREIGN KEY: `habitId` → `habits.id`
-- FOREIGN KEY: `userId` → `users.id`
-- INDEX: `userId`, `habitId`, `completedAt`
-
----
+| Column | Type | Description |
+|--------|------|-------------|
+| id | INT (PK) | Auto-increment |
+| habitId | INT (FK) | References habits.id |
+| userId | INT (FK) | References users.id |
+| notes | TEXT | Optional notes |
+| completedAt | TIMESTAMP | Logged at |
 
 ### `journalEntries`
-
-User journal entries.
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| `id` | INT | PRIMARY KEY, AUTO_INCREMENT | Unique entry ID |
-| `userId` | INT | NOT NULL, FOREIGN KEY | Reference to `users.id` |
-| `title` | TEXT | Nullable | Entry title |
-| `content` | LONGTEXT | NOT NULL | Journal content |
-| `mood` | VARCHAR(64) | Nullable | Mood label (e.g., "happy") |
-| `moodScore` | INT | Nullable | Mood score (1-10) |
-| `tags` | JSON | Nullable | Array of tags |
-| `isPrivate` | BOOLEAN | DEFAULT TRUE | Private/public toggle |
-| `createdAt` | TIMESTAMP | DEFAULT NOW() | Creation date |
-| `updatedAt` | TIMESTAMP | DEFAULT NOW() | Last update |
-
-**Indexes:**
-- PRIMARY KEY: `id`
-- FOREIGN KEY: `userId` → `users.id`
-- INDEX: `userId`, `createdAt`, `mood`
-
----
+| Column | Type | Description |
+|--------|------|-------------|
+| id | INT (PK) | Auto-increment |
+| userId | INT (FK) | References users.id |
+| title | TEXT | Entry title |
+| content | LONGTEXT | Content |
+| mood | VARCHAR(64) | Mood label |
+| moodScore | INT | 1-10 |
+| tags | JSON | Tags array |
+| createdAt | TIMESTAMP | Created |
 
 ### `moodLogs`
-
-Mood tracking history.
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| `id` | INT | PRIMARY KEY, AUTO_INCREMENT | Unique log ID |
-| `userId` | INT | NOT NULL, FOREIGN KEY | Reference to `users.id` |
-| `mood` | VARCHAR(64) | NOT NULL | Mood label |
-| `moodScore` | INT | NOT NULL | Mood score (1-10) |
-| `notes` | TEXT | Nullable | Optional notes |
-| `createdAt` | TIMESTAMP | DEFAULT NOW() | Log date |
-
-**Indexes:**
-- PRIMARY KEY: `id`
-- FOREIGN KEY: `userId` → `users.id`
-- INDEX: `userId`, `createdAt`, `moodScore`
-
----
+| Column | Type | Description |
+|--------|------|-------------|
+| id | INT (PK) | Auto-increment |
+| userId | INT (FK) | References users.id |
+| mood | VARCHAR(64) | Mood label |
+| moodScore | INT | 1-10 |
+| notes | TEXT | Notes |
+| createdAt | TIMESTAMP | Logged at |
 
 ### `goals`
-
-Long-term user goals.
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| `id` | INT | PRIMARY KEY, AUTO_INCREMENT | Unique goal ID |
-| `userId` | INT | NOT NULL, FOREIGN KEY | Reference to `users.id` |
-| `title` | TEXT | NOT NULL | Goal title |
-| `description` | TEXT | Nullable | Goal description |
-| `category` | VARCHAR(64) | Nullable | Goal category |
-| `progress` | INT | DEFAULT 0 | Progress percentage (0-100) |
-| `targetDate` | DATE | Nullable | Target completion date |
-| `createdAt` | TIMESTAMP | DEFAULT NOW() | Creation date |
-| `updatedAt` | TIMESTAMP | DEFAULT NOW() | Last update |
-
-**Indexes:**
-- PRIMARY KEY: `id`
-- FOREIGN KEY: `userId` → `users.id`
-- INDEX: `userId`, `category`, `targetDate`
-
----
+| Column | Type | Description |
+|--------|------|-------------|
+| id | INT (PK) | Auto-increment |
+| userId | INT (FK) | References users.id |
+| title | TEXT | Goal title |
+| description | TEXT | Description |
+| category | VARCHAR(64) | Category |
+| progress | INT | 0-100 |
+| targetDate | DATE | Target date |
+| createdAt | TIMESTAMP | Created |
 
 ### `milestones`
-
-Goal sub-tasks and checkpoints.
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| `id` | INT | PRIMARY KEY, AUTO_INCREMENT | Unique milestone ID |
-| `goalId` | INT | NOT NULL, FOREIGN KEY | Reference to `goals.id` |
-| `userId` | INT | NOT NULL, FOREIGN KEY | Reference to `users.id` |
-| `title` | TEXT | NOT NULL | Milestone title |
-| `isCompleted` | BOOLEAN | DEFAULT FALSE | Completion status |
-| `completedAt` | TIMESTAMP | Nullable | When milestone was completed |
-| `createdAt` | TIMESTAMP | DEFAULT NOW() | Creation date |
-
-**Indexes:**
-- PRIMARY KEY: `id`
-- FOREIGN KEY: `goalId` → `goals.id`
-- FOREIGN KEY: `userId` → `users.id`
-- INDEX: `userId`, `goalId`, `isCompleted`
+| Column | Type | Description |
+|--------|------|-------------|
+| id | INT (PK) | Auto-increment |
+| goalId | INT (FK) | References goals.id |
+| title | TEXT | Milestone title |
+| isCompleted | BOOLEAN | Completed flag |
+| completedAt | TIMESTAMP | Completed at |
 
 ---
+
+## Business Tables
 
 ### `tokenTransactions`
-
-Token purchase and usage history.
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| `id` | INT | PRIMARY KEY, AUTO_INCREMENT | Unique transaction ID |
-| `userId` | INT | NOT NULL, FOREIGN KEY | Reference to `users.id` |
-| `amount` | INT | NOT NULL | Token amount |
-| `type` | ENUM | NOT NULL | "purchase", "usage", "bonus", "refund" |
-| `description` | TEXT | NOT NULL | Transaction description |
-| `relatedId` | VARCHAR(255) | Nullable | Related resource ID (e.g., journal entry) |
-| `createdAt` | TIMESTAMP | DEFAULT NOW() | Transaction date |
-
-**Indexes:**
-- PRIMARY KEY: `id`
-- FOREIGN KEY: `userId` → `users.id`
-- INDEX: `userId`, `type`, `createdAt`
-
----
+| Column | Type | Description |
+|--------|------|-------------|
+| id | INT (PK) | Auto-increment |
+| userId | INT (FK) | References users.id |
+| amount | INT | Token amount (+/-) |
+| type | ENUM | purchase, usage, bonus, refund |
+| description | TEXT | Description |
+| createdAt | TIMESTAMP | Transaction time |
 
 ### `subscriptions`
-
-Active subscription records.
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| `id` | INT | PRIMARY KEY, AUTO_INCREMENT | Unique subscription ID |
-| `userId` | INT | NOT NULL, FOREIGN KEY | Reference to `users.id` |
-| `stripeCustomerId` | VARCHAR(255) | NOT NULL | Stripe customer ID |
-| `stripeSubscriptionId` | VARCHAR(255) | NOT NULL | Stripe subscription ID |
-| `tier` | VARCHAR(32) | NOT NULL | "premium" or "pro" |
-| `status` | VARCHAR(32) | NOT NULL | "active", "past_due", "canceled" |
-| `tokensPerMonth` | INT | NOT NULL | Monthly token allowance |
-| `currentTokens` | INT | NOT NULL | Current month's tokens |
-| `billingCycleStart` | TIMESTAMP | NOT NULL | Billing period start |
-| `billingCycleEnd` | TIMESTAMP | NOT NULL | Billing period end |
-| `canceledAt` | TIMESTAMP | Nullable | When subscription was canceled |
-| `createdAt` | TIMESTAMP | DEFAULT NOW() | Creation date |
-| `updatedAt` | TIMESTAMP | DEFAULT NOW() | Last update |
-
-**Indexes:**
-- PRIMARY KEY: `id`
-- FOREIGN KEY: `userId` → `users.id`
-- UNIQUE: `stripeSubscriptionId`
-- INDEX: `userId`, `status`
-
----
+| Column | Type | Description |
+|--------|------|-------------|
+| id | INT (PK) | Auto-increment |
+| userId | INT (FK) | References users.id |
+| stripeSubscriptionId | VARCHAR(255) | Stripe sub ID |
+| tier | VARCHAR(32) | premium, pro |
+| status | VARCHAR(32) | active, canceled, past_due |
+| createdAt | TIMESTAMP | Created |
 
 ### `payments`
-
-Payment history and receipts.
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| `id` | INT | PRIMARY KEY, AUTO_INCREMENT | Unique payment ID |
-| `userId` | INT | NOT NULL, FOREIGN KEY | Reference to `users.id` |
-| `stripePaymentIntentId` | VARCHAR(255) | NOT NULL | Stripe payment intent ID |
-| `amount` | VARCHAR(32) | NOT NULL | Payment amount (as string for precision) |
-| `currency` | VARCHAR(3) | NOT NULL | Currency code (e.g., "USD") |
-| `status` | VARCHAR(32) | NOT NULL | "succeeded", "failed", "pending" |
-| `description` | TEXT | Nullable | Payment description |
-| `metadata` | JSON | Nullable | Additional metadata |
-| `createdAt` | TIMESTAMP | DEFAULT NOW() | Payment date |
-
-**Indexes:**
-- PRIMARY KEY: `id`
-- FOREIGN KEY: `userId` → `users.id`
-- UNIQUE: `stripePaymentIntentId`
-- INDEX: `userId`, `status`, `createdAt`
-
----
+| Column | Type | Description |
+|--------|------|-------------|
+| id | INT (PK) | Auto-increment |
+| userId | INT (FK) | References users.id |
+| stripePaymentIntentId | VARCHAR(255) | Stripe payment ID |
+| amount | VARCHAR(32) | Amount |
+| currency | VARCHAR(3) | Currency |
+| status | VARCHAR(32) | succeeded, failed, pending |
+| createdAt | TIMESTAMP | Payment time |
 
 ### `supportTickets`
-
-Customer support tickets.
-
-| Column | Type | Constraints | Description |
-|--------|------|-------------|-------------|
-| `id` | INT | PRIMARY KEY, AUTO_INCREMENT | Unique ticket ID |
-| `userId` | INT | NOT NULL, FOREIGN KEY | Reference to `users.id` |
-| `subject` | TEXT | NOT NULL | Ticket subject |
-| `description` | TEXT | NOT NULL | Ticket description |
-| `category` | VARCHAR(64) | Nullable | "billing", "bug", "feature", etc. |
-| `priority` | VARCHAR(32) | DEFAULT "medium" | "low", "medium", "high", "urgent" |
-| `status` | VARCHAR(32) | DEFAULT "open" | "open", "in_progress", "resolved", "closed" |
-| `createdAt` | TIMESTAMP | DEFAULT NOW() | Creation date |
-| `updatedAt` | TIMESTAMP | DEFAULT NOW() | Last update |
-| `resolvedAt` | TIMESTAMP | Nullable | When ticket was resolved |
-
-**Indexes:**
-- PRIMARY KEY: `id`
-- FOREIGN KEY: `userId` → `users.id`
-- INDEX: `userId`, `status`, `priority`, `createdAt`
+| Column | Type | Description |
+|--------|------|-------------|
+| id | INT (PK) | Auto-increment |
+| userId | INT (FK) | References users.id |
+| subject | TEXT | Subject |
+| description | TEXT | Description |
+| category | VARCHAR(64) | Category |
+| status | VARCHAR(32) | open, in_progress, resolved |
+| createdAt | TIMESTAMP | Created |
 
 ---
 
 ## Relationships
 
 ```
-users (1) ──→ (many) habits
-users (1) ──→ (many) habitLogs
-users (1) ──→ (many) journalEntries
-users (1) ──→ (many) moodLogs
-users (1) ──→ (many) goals
-users (1) ──→ (many) milestones
-users (1) ──→ (many) tokenTransactions
-users (1) ──→ (many) subscriptions
-users (1) ──→ (many) payments
-users (1) ──→ (many) supportTickets
-
-habits (1) ──→ (many) habitLogs
-goals (1) ──→ (many) milestones
+users (1) → (many) healthReadings
+users (1) → (many) healthAlerts
+users (1) → (many) emergencyContacts
+users (1) → (many) exerciseSessions
+users (1) → (many) habits → (many) habitLogs
+users (1) → (many) journalEntries
+users (1) → (many) moodLogs
+users (1) → (many) goals → (many) milestones
+users (1) → (many) tokenTransactions
+users (1) → (many) subscriptions
+users (1) → (many) payments
+users (1) → (many) supportTickets
 ```
 
----
-
-## Data Types
-
-| Type | Usage | Example |
-|------|-------|---------|
-| INT | IDs, counts, scores | `id`, `moodScore` |
-| VARCHAR(n) | Short strings | `email`, `category` |
-| TEXT | Medium strings | `name`, `description` |
-| LONGTEXT | Large content | `journalEntries.content` |
-| TIMESTAMP | Dates/times | `createdAt`, `updatedAt` |
-| DATE | Dates only | `targetDate` |
-| BOOLEAN | Flags | `isPrivate`, `isCompleted` |
-| ENUM | Fixed options | `role`, `frequency` |
-| JSON | Structured data | `tags`, `metadata` |
-
----
-
-## Migrations
-
-### v1.0.0 (2026-02-20)
-- Initial schema with all core tables
-- Stripe integration tables
-- Support ticket system
-
----
-
-## Backup & Recovery
-
-**Backup Strategy:**
-- Daily automated backups
-- 30-day retention
-- Point-in-time recovery available
-
-**Recovery Procedure:**
-1. Contact support
-2. Specify recovery point
-3. Restore from backup
-4. Verify data integrity
-
----
-
-**Last Updated:** 2026-02-20
-**Version:** 1.0.0
+**Version:** 2.0.0 (Health Monitoring Update) | **Last Updated:** 2026-02-20
