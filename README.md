@@ -1,5 +1,12 @@
 # Anime Ascend
 
+
+<!-- AUTO-PACKAGE-BADGES:START -->
+<!-- Auto-generated package badges -->
+
+![npm version](https://img.shields.io/npm/v/seishun-wellness?style=flat-square&logo=npm&color=blue) ![npm downloads](https://img.shields.io/npm/dw/seishun-wellness?style=flat-square&color=brightgreen) ![npm license](https://img.shields.io/npm/l/seishun-wellness?style=flat-square) [![Deployed](https://img.shields.io/badge/deployed-1.0.0-blue?style=flat-square)](https://www.npmjs.com/package/seishun-wellness)
+
+<!-- AUTO-PACKAGE-BADGES:END -->
 **Your Wellness Companion** — Health monitoring with Japanese cherry blossom aesthetics and a chibi companion named Hana.
 
 [![GitHub](https://img.shields.io/badge/GitHub-MIDNGHTSAPPHIRE%2Fanime--ascend--wellness-pink)](https://github.com/MIDNGHTSAPPHIRE/anime-ascend-wellness)
